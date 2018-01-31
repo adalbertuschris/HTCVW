@@ -1,0 +1,10 @@
+﻿VW3D project require 2 external library:
+
+- OpenTK 
+https://github.com/opentk/opentk
+
+- SharpFont
+https://github.com/Robmaister/SharpFont
+(SharpFont require freetype6.dll (x64) located in Dependencies directory SharpFont project)
+
+This libraries also must be added to HTCVW directory

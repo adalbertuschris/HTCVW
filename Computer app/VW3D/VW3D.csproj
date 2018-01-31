@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D579E21C-F785-44D8-9FE0-707B98D2E4AA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VW3D</RootNamespace>
+    <AssemblyName>VW3D</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK">
+      <HintPath>..\..\..\..\..\Desktop\ConsoleApplication3\ConsoleApplication3\bin\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFont">
+      <HintPath>..\..\..\..\..\Desktop\ConsoleApplication3\Libraries\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Windows">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.cs" />
+    <Compile Include="GameObject.cs" />
+    <Compile Include="Graphic\IndicesCollection.cs" />
+    <Compile Include="Graphic\IndicesCollectionPointer.cs" />
+    <Compile Include="Graphic\ObjectRenderer.ComponentRenderer.cs" />
+    <Compile Include="Graphic\ObjectRenderer.ComponentRenderer.Extension.cs" />
+    <Compile Include="Graphic\GraphicPipeline\ProgramShader.Extension.cs" />
+    <Compile Include="Graphic\ObjectRenderer.cs" />
+    <Compile Include="Graphic\SceneRenderer.cs" />
+    <Compile Include="Graphic\Texture.cs" />
+    <Compile Include="Input\Controller.cs" />
+    <Compile Include="Physic\Transform.cs" />
+    <Compile Include="Text\Character.cs" />
+    <Compile Include="Graphic\EBO.cs" />
+    <Compile Include="Extensions\DictionaryExtension.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="Graphic\GraphicPipeline\ProgramShader.cs" />
+    <Compile Include="Graphic\GraphicPipeline\Shader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scene\Camera.cs" />
+    <Compile Include="Scene\Light.cs" />
+    <Compile Include="Scene\Lighting.cs" />
+    <Compile Include="Text\TextGenerator.cs" />
+    <Compile Include="Graphic\VAO.cs" />
+    <Compile Include="Graphic\VBO.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fonts\arial.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fonts\arialbd.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fonts\arialbi.ttf" />
+    <None Include="Fonts\ariali.ttf" />
+    <None Include="Fonts\ariblk.ttf" />
+    <None Include="Fonts\calibri.ttf" />
+    <None Include="Fonts\calibrib.ttf" />
+    <None Include="Fonts\calibrii.ttf" />
+    <None Include="Fonts\calibril.ttf" />
+    <None Include="Fonts\calibrili.ttf" />
+    <None Include="Fonts\calibriz.ttf" />
+    <None Include="Shaders\fs.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\fs2.glsl" />
+    <None Include="Shaders\fs_control.glsl" />
+    <None Include="Shaders\fs_lit.glsl" />
+    <None Include="Shaders\fs_lit_advanced.glsl" />
+    <None Include="Shaders\fs_norm.glsl" />
+    <None Include="Shaders\fs_tex.glsl" />
+    <None Include="Shaders\fs_text.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\vs.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\vs_control.glsl" />
+    <None Include="Shaders\vs_lit.glsl" />
+    <None Include="Shaders\vs_lit_advanced.glsl" />
+    <None Include="Shaders\vs_norm.glsl" />
+    <None Include="Shaders\vs_tex.glsl" />
+    <None Include="Shaders\vs_text.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AppController\AppController.csproj">
+      <Project>{33fde7e3-ddb6-4cb8-bfcf-371fd4183541}</Project>
+      <Name>AppController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GloveController\GloveController.csproj">
+      <Project>{feb0365d-deaf-48a2-a2fe-a40f0b338ab3}</Project>
+      <Name>GloveController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CustomBox\CustomBox.csproj">
+      <Project>{61399386-8839-45ea-9321-67a42749914c}</Project>
+      <Name>CustomBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\M3DIL\M3DIL.csproj">
+      <Project>{3837817a-27ed-48cd-9ba4-84337b83f35b}</Project>
+      <Name>M3DIL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MouseKeyboardController\MouseKeyboardController.csproj">
+      <Project>{217600b7-31e9-48dc-ac8f-bd52740968a0}</Project>
+      <Name>MouseKeyboardController</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

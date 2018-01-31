@@ -1,0 +1,19 @@
+Refactor SceneRenderer
+Refactor Game
+Refactor Zoom Method
+Refactor Text
+Exceptions
+Clean memory
+Refactor Model (Part, Group -> Component Composite)
+Set ProjectionMatrix for all model (load min, max size model)
+Set sensitivity
+HQ render text for all screen resolution
+Set Lights
+Set Camera
+add support for texture
+Refactor GloveController
+
+In future
+Display list with all parts
+Add strategy for loading model (different type)
+Add assimp library

@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using CustomBox;
+<<<<<<< HEAD
+using AppController;
+using GloveController;
+=======
+using M3DIL;
+using M3DIL.Sources;
+>>>>>>> feature-modelLib
+
+namespace D3D
+{
+    public class App
+    {
+        public static CustomBox.WaitBox waitBox;
+        ControllerType _controllerType;
+        Input.Controller _controller;
+        Model3D.Model model;
+        Game game;       
+
+        static void Main(string[] args)
+        {
+            Application.EnableVisualStyles();
+                       
+            App app = new D3D.App();
+            app._controllerType = (ControllerType)Enum.Parse(typeof(ControllerType), args[0]);
+            app.ComponentInitialized += App_ModelLoaded;
+            StringBuilder tmpPath = new StringBuilder();
+            foreach (var arg in args.Skip(1))
+            {
+                tmpPath.Append(arg + " ");
+            }
+            string path = tmpPath.ToString().TrimEnd(' ');
+
+            Task.Factory.StartNew(
+                () => WaitBox.Show("Loading model, please wait", "Loading Model"),
+                TaskCreationOptions.LongRunning
+            );
+            app.Run(path);
+        }
+
+        private static void App_ModelLoaded(object sender, EventArgs e)
+        {
+            WaitBox.Close();
+        }
+        
+        public event EventHandler ModelLoaded;
+<<<<<<< HEAD
+        public event EventHandler ComponentInitialized;        
+=======
+        public event EventHandler ComponentInitialized;
+        
+
+        Model model;
+        Game game;
+        GloveController.Glove glove = new GloveController.Glove();
+>>>>>>> feature-modelLib
+
+        protected virtual void OnModelLoaded(EventArgs e)
+        {
+            if (ModelLoaded != null)
+            {
+                ModelLoaded(this, e);
+            }
+            Console.WriteLine("ModelLoaded");
+        }       
+
+        protected virtual void OnComponentInitialized(EventArgs e)
+        {
+            if (ComponentInitialized != null)
+            {
+                ComponentInitialized(this, e);
+            }
+            //Console.WriteLine("ComponentInitialized");
+        }
+
+        public void Run(string modelPath)
+        {
+            model = Model.LoadModel(SourceType.OBJ, modelPath);
+            OnModelLoaded(new EventArgs());
+
+            game = new Game(model);
+            CreateController();          
+         
+            game.ComponentLoaded += (sender, e) => { OnComponentInitialized(e); };
+            game.Closing += Game_Closing;
+            game.Run(200, 100);
+        }
+
+        private void CreateController()
+        {
+            switch (_controllerType)
+            {
+                case ControllerType.Mouse_Keyboard:
+                    _controller = Input.Controller.CreateController(new MouseKeyboardController.MouseKeyboard(game));
+                    break;
+                case ControllerType.Glove:
+                    _controller = Input.Controller.CreateController(new Glove());
+                    break;
+            }
+
+            _controller.Initialize(game);
+            _controller.Connect();
+        }
+        
+        private void Game_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {            
+            model.Delete();
+            game.Clear();
+        }         
+    }
+}

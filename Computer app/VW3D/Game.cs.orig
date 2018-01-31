@@ -1,0 +1,457 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using System.Threading.Tasks;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using D3D.Graphic.GraphicPipeline;
+using D3D.Text;
+using D3D.Extensions;
+using D3D.Graphic;
+using GloveController;
+using CustomBox;
+<<<<<<< HEAD
+using AppController;
+=======
+using M3DIL;
+using M3DIL.Mesh;
+>>>>>>> feature-modelLib
+
+namespace D3D
+{
+    public class Game : GameWindow
+    {
+        public event EventHandler ComponentLoaded;
+
+        //ProgramShader ps;
+        //Inputs.MouseKeybord mk = new Inputs.MouseKeybord();
+        TextGenerator arialText;
+        Model model;
+        private GloveController.Glove _glove;
+
+        object _lockObj = new object();
+        internal SceneRenderer scene;
+        Scene.Camera camera;
+
+        float fovy;
+<<<<<<< HEAD
+        float initialFovyVal = 20;
+        internal Game(Model3D.Model model) : base(512, 512, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8))
+=======
+        internal Game(Model model) : base(512, 512, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8))
+>>>>>>> feature-modelLib
+        {
+            //GL.Enable(EnableCap.Texture2D);
+            Title = "HTCVW Model";
+            this.model = model;
+            //Inputs.MouseKeybord.Initialize(this);
+        }
+
+        void OnComponentLoaded(EventArgs e)
+        {
+            if (ComponentLoaded != null)
+            {
+                ComponentLoaded(this, e);
+            }
+        }
+
+        void InitProgram()
+        {
+            fovy = initialFovyVal;
+            //textures.Add("opentksquare.png", LoadImage("opentksquare.png"));
+            //textures.Add("opentksquare", LoadImage("opentksquare.png"));
+
+            #region comments
+
+            //    pgmID = GL.CreateProgram();
+
+            //vao_position = GL.GenVertexArray();
+            //vao_color = GL.GenVertexArray();
+            //GL.BindVertexArray(vao_position);
+            //GL.BindVertexArray(vao_color);
+            //GL.BindAttribLocation(pgmID, vao_position, "vPosition");
+            //GL.BindAttribLocation(pgmID, vao_color, "vColor");
+
+            //lastMousePos = new Vector2(Mouse.X, Mouse.Y);
+            //LoadShader("vs.glsl", ShaderType.VertexShader, pgmID, out vsID);
+            //LoadShader("fs.glsl", ShaderType.FragmentShader, pgmID, out fsID);
+            //attr_vPos = GL.GetAttribLocation(pgmID, "vPosition");
+            //attr_vCol = GL.GetAttribLocation(pgmID, "vColor");
+            //Console.WriteLine("vao_position: {0}", attr_vPos);
+            //Console.WriteLine("vPosition: {0}", GL.GetAttribLocation(pgmID, "vPosition"));
+
+            //Console.WriteLine("vao_color: {0}", attr_vCol);
+            //Console.WriteLine("vColor: {0}", GL.GetAttribLocation(pgmID, "vColor"));
+
+            //attr_vPos = GL.GetAttribLocation(pgmID, "vPosition");
+            //attr_vCol = GL.GetAttribLocation(pgmID, "vColor");
+            //uniform_mView = GL.GetUniformLocation(pgmID, "modelview");
+            //if (attr_vPos == -1 || attr_vCol == -1 || uniform_mView == -1)
+            //{
+            //    Console.WriteLine("Error binding attributes");
+            //}
+
+            //GL.GenBuffers(1, out ibo_elements);
+            //GL.GenBuffers(1, out vbo_position);
+            //GL.GenBuffers(1, out vbo_color);
+            //GL.GenBuffers(1, out vbo_mview);
+
+
+
+
+            //GL.GenVertexArrays(1,out vao);
+            //cam.Position += new Vector3(0f, 0f, 3f);
+            #endregion
+        }
+
+        //public void SetGlove(GloveController.Glove glove)
+        //{
+        //    _glove = glove;
+        //    _glove.WorkModeChanged += WorkModeChanged;
+        //    _glove.PrevPartChoosed += PrevPartChoosed;
+        //    _glove.NextPartChoosed += NextPartChoosed;
+        //    _glove.PartDispModeChanged += PartDispModeChanged;
+        //    _glove.AllPartDispModeChanged += AllPartDispModeChanged;
+        //    _glove.ChangeOrientPosZoomOperationCompleted += ChangeOrientPosZoomOperationCompleted;
+        //    _glove.OrientationChanged += OrientationChanged;
+        //    _glove.PositionChanged += PositionChanged;
+        //    _glove.ZoomChanged += ZoomChanged;
+        //    _glove.TestData += TestData;
+        //}
+
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            
+
+            InitProgram();            
+            
+            arialText = new TextGenerator("fonts/arialbd.ttf", "arialB");
+            TextGenerator.ProjMatrix = Matrix4.CreateOrthographic(512, 512, -100, 100);
+            Scene.Lighting.NewLight();
+            camera = new Scene.Camera();
+            camera.Position = new Vector3(0, 0, -50);
+            
+
+            GL.ClearColor(Color.LightGray);
+            GL.PointSize(5f);
+            
+            scene = new SceneRenderer();
+            scene.AddLight(Scene.Lighting.GetLight());
+            scene.AddModel(model);
+            scene.AddCamera(camera);
+            scene.SetProjectionMatrix(fovy, (float)ClientSize.Width, (float)ClientSize.Height, 20.0f, 500.0f);
+            OnComponentLoaded(new EventArgs());
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+
+            
+            Matrix4 modelViewProj = model.ModelMatrix * camera.ViewMatrix * scene.ProjectionMatrix;
+            scene.UpdateModelViewProjMatrix(modelViewProj);
+            scene.UpdateCamera();
+
+            //scene.UpdateModelViewProjMatrix(modelViewProj);
+            //scene.UpdateCamera();
+            //float sizeWindow = Math.Max(ClientSize.Width, ClientSize.Height);
+
+            Thread.Sleep(8);
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+            //Matrix4 modelViewProj = model.ModelMatrix * camera.ViewMatrix * scene.ProjectionMatrix;
+            
+            //scene.UpdateModelViewProjMatrix(modelViewProj);
+            //scene.UpdateCamera();
+            GL.Viewport(0, 0, Width, Height);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            ////Roboczy
+            //string dispModeAllPart2 = "";
+            //switch (counterAllMode)
+            //{
+            //    case 0:
+            //        dispModeAllPart2 = "normal";
+            //        break;
+            //    case 1:
+            //        dispModeAllPart2 = "transparent";
+            //        break;
+            //    case 2:
+            //        dispModeAllPart2 = "hide";
+            //        break;
+            //}
+
+            //float xPosText2 = (-1) * (ClientSize.Width / 2) + 6;
+            //float yPosText2 = ClientSize.Height / 2 - 16;
+
+            ////System.Diagnostics.Debug.WriteLine(xPosText2);
+            ////System.Diagnostics.Debug.WriteLine(yPosText2);
+            //float xPosText = (-1) * (ClientSize.Width / 2) + 6;
+            //float yPosText = (ClientSize.Height / 2) - 16;
+            //arialText.RenderText(@"Display mode:", xPosText, yPosText, new Vector3(0.0f, 0.0f, 0.0f));
+            //arialText.RenderText(@"Display mode:", xPosText2, yPosText2, new Vector3(0.0f, 0.0f, 0.0f));
+            //arialText.RenderText(string.Format("All parts: {0}", dispModeAllPart2), xPosText2, yPosText2 - 15, new Vector3(0.0f, 0.0f, 0.0f));
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+            if (scene.WorkMode)
+            {
+                float xPosText = (-1) * (ClientSize.Width / 2) + 6;
+                float yPosText = (ClientSize.Height / 2) - 16;
+                arialText.RenderText(@"Display mode:", xPosText, yPosText, new Vector3(0.0f, 0.0f, 0.0f));
+                arialText.RenderText(string.Format("All parts: {0}", model.DisplayMode.ToString()), xPosText, yPosText - 15, new Vector3(0.0f, 0.0f, 0.0f));
+                if (selectedPart != null && selectedPart.Current != null)
+                {
+                    arialText.RenderText(string.Format("Choosed part: {0}", selectedPart.Current.DisplayMode), xPosText, yPosText - 30, new Vector3(0.0f, 0.0f, 0.0f));
+                }
+            }
+
+            scene.Draw();
+
+            SwapBuffers();
+            /*hread.Sleep(1);*/
+        }
+     
+        
+        public void Clear()
+        {
+            scene.Clear();
+            arialText.Clear();
+        }
+
+    protected override void OnResize(EventArgs e)
+        {
+            //base.OnResize(e);
+            scene.UpdateScreenSize((float)ClientSize.Width, (float)ClientSize.Height);
+            //float sizeWindow = Math.Min(ClientSize.Width, ClientSize.Height);
+
+
+            //System.Diagnostics.Debug.WriteLine("Width: {0}, Height: {1}, SizeWin: {2}", ClientSize.Width, ClientSize.Height, sizeWindow);
+            TextGenerator.ProjMatrix = Matrix4.CreateOrthographic((float)ClientSize.Width, (float)ClientSize.Height, -10, 10);
+        }
+        
+        Matrix4 lastRotMatrix = Matrix4.Identity;
+        Matrix4 lastTransMatrix = Matrix4.Identity;      
+        
+        float lastFovy = 0f;
+        bool beginReceive = true;
+        
+        CustomEnumerator selectedPart;
+
+        public void WorkModeChanged(object sender, WorkModeEventArgs e)
+        {
+            if (scene != null)
+            {
+                bool state = false;
+                if (e.State == WorkModeState.Enabled)
+                {
+                    state = true;
+                }
+                //WorkMode = Convert.ToBoolean(e.State);
+                //Console.WriteLine("WorkModeChanged");
+                scene.WorkMode = Convert.ToBoolean(state);
+                //foreach (var part in model.Parts)
+                //{
+                //    //negation
+                //    part.Value.WorkMode = Convert.ToBoolean(e.State);
+                //}
+            }
+        }
+
+        public void PrevPartChoosed(object sender, EventArgs e)
+        {
+            if (model != null && scene.WorkMode)
+            {
+                if (selectedPart == null)
+                {
+                    selectedPart = model.Parts.GetCustomEnumerator();
+                    if (selectedPart.MovePrev())
+                    {
+                        selectedPart.Current.Selected = true;
+                        //System.Diagnostics.Debug.WriteLine(selectedPart.Current.GetSetDisplayMode());
+                    }
+                    else
+                    {
+                        selectedPart = null;
+                    }
+                }
+                else
+                {
+                    //set last part
+                    selectedPart.Current.Selected = false;
+                    //set new part
+                    if (selectedPart.MovePrev())
+                    {
+                        selectedPart.Current.Selected = true;
+                        //System.Diagnostics.Debug.WriteLine(selectedPart.Current.GetSetDisplayMode());
+                    }
+                    else
+                    {
+                        selectedPart = null;
+                    }
+                }
+            }
+        }
+
+        public void NextPartChoosed(object sender, EventArgs e)
+        {
+            if (model != null && scene.WorkMode)
+            {
+                if (selectedPart == null)
+                {
+                    selectedPart = model.Parts.GetCustomEnumerator();
+                    if (selectedPart.MoveNext())
+                    {
+                        selectedPart.Current.Selected = true;
+                        System.Diagnostics.Debug.WriteLine(selectedPart.Current.Index);
+                    }
+                    else
+                    {
+                        selectedPart = null;
+                    }
+                }
+                else
+                {
+                    //set last part
+                    selectedPart.Current.Selected = false;
+                    //set new part
+                    if (selectedPart.MoveNext())
+                    {
+                        selectedPart.Current.Selected = true;
+                        System.Diagnostics.Debug.WriteLine(selectedPart.Current.Index);
+                    }
+                    else
+                    {
+                        selectedPart = null;
+                    }
+                }
+            }
+        }
+
+        public void PartDispModeChanged(object sender, EventArgs e)
+        {
+            if (model != null && scene.WorkMode)
+            {
+                if (selectedPart != null)
+                {
+                    switch (selectedPart.Current.DisplayMode)
+                    {
+                        case DispMode.normal:
+                            selectedPart.Current.DisplayMode = DispMode.transparent;
+                            break;
+                        case DispMode.hide:
+                            selectedPart.Current.DisplayMode = DispMode.normal;
+                            break;
+                        case DispMode.transparent:
+                            selectedPart.Current.DisplayMode = DispMode.hide;
+                            break;
+                    }
+                    //Console.WriteLine(selectedPart.Current.GetSetDisplayMode());
+                }
+            }
+        }
+
+        public void AllPartDispModeChanged(object sender, EventArgs e)
+        {
+            if (model != null && scene.WorkMode)
+            {
+                switch (model.DisplayMode)
+                {
+                    case DispMode.normal:
+                        model.DisplayMode = DispMode.transparent;
+                        break;
+                    case DispMode.hide:
+                        model.DisplayMode = DispMode.normal;
+                        break;                    
+                    case DispMode.transparent:
+                        model.DisplayMode = DispMode.hide;
+                        break;
+                }
+
+                foreach (var part in model.Parts)
+                {
+                    part.Value.DisplayMode = model.DisplayMode;
+                }                
+            }
+        }
+
+        public void ChangeOrientPosZoomOperationCompleted(object sender, EventArgs e)
+        {
+            beginReceive = true;
+            Console.WriteLine("EndReceive");
+            
+        }
+
+        int lastPitch;
+        int lastRoll;
+        public void OrientationChanged(object sender, OrientPosEventArgs e)
+        {            
+            if (beginReceive)
+            {
+                model.Reset();
+                lastRotMatrix = model.ModelMatrix;
+                //System.Diagnostics.Debug.WriteLine("Pitch: {0}, Roll: {1}", e.Pitch, e.Roll);
+                beginReceive = false;                
+            }
+
+            model.Rotate(lastRotMatrix, e.Pitch, e.Roll);
+
+        }
+
+        public void PositionChanged(object sender,OrientPosEventArgs e)
+        {
+            //Point mousePos = Input.GetMousePos();
+            //Console.WriteLine(mousePos.X);
+            if (beginReceive)
+            {
+                model.Reset();
+                lastTransMatrix = model.ModelMatrix;
+                beginReceive = false;                
+            }
+            model.Translation(lastTransMatrix, e.Pitch, e.Roll);            
+        }
+
+        public void ZoomChanged(object sender, OrientPosEventArgs e)
+        {
+            if (e.Pitch == 0)
+            {
+                lastFovy = e.Pitch;
+            }
+
+            float sensitivity = 0.2f;
+
+            float angle = e.Pitch - lastFovy ;
+            float tmpFovy = fovy + angle * sensitivity;
+
+            if (tmpFovy > 1 && tmpFovy < 179)
+            {
+                fovy = tmpFovy;
+                scene.UpdateFovy(tmpFovy);
+            }
+            lastFovy = e.Pitch;
+        }
+
+        public void TestData(object sender, TestEventArgs e)
+        {
+            Console.WriteLine("Roll: {0}", e.Data);
+        }        
+
+        //private float DegToRad(float angle)
+        //{
+        //    return (float)(angle * Math.PI / 180);
+        //}    
+    }
+}
