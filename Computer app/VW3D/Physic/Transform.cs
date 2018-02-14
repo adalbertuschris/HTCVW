@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using OpenTK;
 using M3DIL;
 
@@ -18,8 +19,8 @@ namespace VW3D.Physic
         Matrix4 _referenceModelMatrix = Matrix4.Identity;
 
         float _lastTransXAngle, _lastTransYAngle;
-        float _lastRotXAngle, _lastRotYAngle;     
-        
+        float _lastRotXAngle, _lastRotYAngle;
+
         Matrix4 _transX = Matrix4.CreateTranslation(0, 0, 0);
         Matrix4 _transY = Matrix4.CreateTranslation(0, 0, 0);
         Matrix4 _rotX = Matrix4.CreateRotationX(0);
@@ -28,15 +29,55 @@ namespace VW3D.Physic
         float _sensitivityRot = 0.8f;
         float _sensitivityTrans = 0.08f;
 
+        BlockingCollection<Tuple<TransformType, int>> _xAngle;
+        BlockingCollection<Tuple<TransformType, int>> _yAngle;
+
         Task _taskX;
         Task _taskY;
 
         public Transform()
         {
-            _taskX = Task.Factory.StartNew(()=> { }, TaskCreationOptions.LongRunning);
-            _taskY = Task.Factory.StartNew(() => { }, TaskCreationOptions.LongRunning);
+            _xAngle = new BlockingCollection<Tuple<TransformType, int>>();
+            _yAngle = new BlockingCollection<Tuple<TransformType, int>>();
+
+            _taskX = Task.Factory.StartNew(TransformX, TaskCreationOptions.LongRunning);
+            _taskY = Task.Factory.StartNew(TransformY, TaskCreationOptions.LongRunning);
         }
-               
+
+        public void TransformX()
+        {
+            while (true)
+            {
+                Tuple<TransformType, int> item = _xAngle.Take();
+                switch (item.Item1)
+                {
+                    case TransformType.Rotate:
+                        RotateX(item.Item2);
+                        break;
+                    case TransformType.Translate:
+                        TranslationX(item.Item2);
+                        break;
+                }
+            }
+        }
+
+        public void TransformY()
+        {
+            while (true)
+            {
+                Tuple<TransformType, int> item = _yAngle.Take();
+                switch (item.Item1)
+                {
+                    case TransformType.Rotate:
+                        RotateY(item.Item2);
+                        break;
+                    case TransformType.Translate:
+                        TranslationY(item.Item2);
+                        break;
+                }
+            }
+        }
+
         public Matrix4 ModelMatrix
         {
             get
@@ -46,17 +87,15 @@ namespace VW3D.Physic
                     return _modelMatrix;
                 }
             }
-        }        
+        }
 
-        public async void SaveChanges()
+        public void SaveChanges()
         {
-            await Task.WhenAll(_taskX, _taskY);
-
             _referenceModelMatrix = ModelMatrix;
 
             _lastTransXAngle = _lastTransYAngle = 0;
             _lastRotXAngle = _lastRotYAngle = 0;
-           
+
             lock (_lock2)
             {
                 _rotX = Matrix4.CreateRotationX(0);
@@ -67,14 +106,14 @@ namespace VW3D.Physic
 
         public void Translate(int pitch, int roll)
         {
-                _taskX = _taskX.ContinueWith((t) => { TranslationX(roll); });
-                _taskY = _taskY.ContinueWith((t) => { TranslationY(pitch); }); 
+            _xAngle.Add(new Tuple<TransformType, int>(TransformType.Translate, roll));
+            _yAngle.Add(new Tuple<TransformType, int>(TransformType.Translate, pitch));
         }
 
         public void Rotate(int pitch, int roll)
         {
-                _taskX = _taskX.ContinueWith((t) => { RotateX(pitch); });
-                _taskY = _taskY.ContinueWith((t) => { RotateY(roll); });
+            _xAngle.Add(new Tuple<TransformType, int>(TransformType.Rotate, pitch));
+            _yAngle.Add(new Tuple<TransformType, int>(TransformType.Rotate, roll));
         }
 
         private void TranslationY(int transYAngle)
@@ -121,7 +160,7 @@ namespace VW3D.Physic
                     lock (_lock2)
                     {
                         _transX = Matrix4.CreateTranslation(-(float)i, 0, 0);
-                        _modelMatrix = _referenceModelMatrix * _transX * _transY;                        
+                        _modelMatrix = _referenceModelMatrix * _transX * _transY;
                     }
                 }
             }
@@ -215,6 +254,11 @@ namespace VW3D.Physic
                 }
             }
             _lastRotYAngle = rotYAngle;
-        }        
+        }
+        private enum TransformType
+        {
+            Rotate,
+            Translate
+        }
     }
 }
